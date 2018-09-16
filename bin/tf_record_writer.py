@@ -1,5 +1,8 @@
 #! /usr/bin/env python
 # This file writes records into tensorflow
+
+# Based heavily on https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/how_tos/reading_data/convert_to_records.py
+
 import tensorflow as tf
 import cv2
 import glob

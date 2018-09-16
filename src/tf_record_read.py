@@ -1,3 +1,18 @@
+"""
+This file provides a class for constructing datasets from a tfrecord file that can then be used in a hot-swappable way with an iterator
+tf.record reading code influenced heavily by:
+https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/how_tos/reading_data/fully_connected_reader.py
+
+https://www.tensorflow.org/api_docs/python/tf/data/Dataset#map
+https://www.tensorflow.org/guide/datasets
+
+Additional sources consulted:
+https://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
+http://machinelearninguru.com/deep_learning/tensorflow/basics/tfrecord/tfrecord.html
+
+
+"""
+
 import tensorflow as tf
 class GWData(object):
 
