@@ -1,0 +1,4 @@
+python demo_1.py --classifier type --run demo
+python demo_1.py --classifier type --run analyzer
+python demo_1.py --classifier size --run demo
+python demo_1.py --classifier size --run analyzer
