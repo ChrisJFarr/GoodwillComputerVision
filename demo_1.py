@@ -68,14 +68,14 @@ VALIDATION_FOLDER = "val"
 #       # train model
 #       train_files = os.listdir(train_folder_path)
 #       join train_folder_path to create file paths
-#       train(train_file_paths)
+#       model_object.train(train_file_paths)
 #       # create test predictions
 #       test_files = os.listdir(test_folder_path)
-#       get_images_array(image_paths_list)
-#       preprocess_images(test_images_array)
-#       predict(test_paths_list)
+#       model_object.get_images_array(image_paths_list)
+#       model_object.preprocess_images(test_images_array)
+#       model_object.predict(test_paths_list)
 #       # get actual classes
-#       get_classes_array(test_paths_list)
+#       model_object.get_classes_array(test_paths_list)
 #       # print model validation summary
 #       display_images(orig, preprocessed, actual_label, pred_label)
 #   run_analyzer(model_object, train_folder_path)
