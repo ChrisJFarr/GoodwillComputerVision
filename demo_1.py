@@ -11,8 +11,15 @@ import os
 SIZE_CLASSIFICATION_FOLDER = "t_shirt"  # womens_jeans, womens_short_sleeve, womens_long_sleeve
 SIZE_DATA = os.path.join("src\\data\\size_data", SIZE_CLASSIFICATION_FOLDER)
 TYPE_DATA = "src\\data\\type_data"
+TRAIN_FOLDER = "train"
+TEST_FOLDER = "test"
+VALIDATION_FOLDER = "val"
 
 # IMPLEMENTATION
+# TODO Implementation Steps:
+# 1. Build shells for all of the below classes (consider unit test shells)
+# 2. Pull code from FashionClassification repo for model implementation
+# 3. Test and build all classes/methods/abstract methods
 
 """ MODEL ABSTRACT IMPLEMENTATION """
 # Abstract class:
@@ -36,61 +43,70 @@ TYPE_DATA = "src\\data\\type_data"
 """ MODEL VALIDATION IMPLEMENTATION """
 # ImageClassificationValidation
 # Methods
-#   cross_validation(train_folder_path)
+#   cross_validation_summary(model_object, train_folder_path)
 #       get file names
+#       join file names with train folder path
 #       create stratified splits (consider repeated)
 #       actual, predicted = [], []
 #       loop
-#           train(train_paths)
-#           predict(test_paths)
-#           get_classes_array(test_paths)
+#           model_class.train(train_paths)
+#           model_class.predict(test_paths)
+#           model_class.get_classes_array(test_paths)
 #           append actual and predicted
-#       print_summary(actual, predicted)
-#   score(actual, predicted)
-#   print_summary(actual, predicted)
+#       np.unique(model_class.get_classes_array(image_paths_list))
+#       print_summary(actual, predicted, available_classes)
+#   print_summary(actual, predicted, available_classes)
+#       # Accuracy, available classes, confusion matrix
+#       accuracy_score(actual, predicted)
+#       confusion_matrix(actual, predicted, available_classes)
 
 """ DEMO 1 IMPLEMENTATION """
-# TODO START HERE!!! Nearly complete with sudo code
-# Abstract class:
-#   DemoOneAbstract
-# Abstract methods:
+# Base Class:
+#   DemoClass
 # Methods:
-#   run_demo(train_folder_path, test_folder_path)
-#       train model
+#   run_demo(model_object, train_folder_path, test_folder_path)
+#       # train model
 #       train_files = os.listdir(train_folder_path)
 #       join train_folder_path to create file paths
-#       train(train_files)
-#       create test predictions
+#       train(train_file_paths)
+#       # create test predictions
 #       test_files = os.listdir(test_folder_path)
 #       get_images_array(image_paths_list)
-#       preprocess_image(test_images_array)
+#       preprocess_images(test_images_array)
 #       predict(test_paths_list)
-#       get actual classes
+#       # get actual classes
 #       get_classes_array(test_paths_list)
-#       print model validation summary
+#       # print model validation summary
 #       display_images(orig, preprocessed, actual_label, pred_label)
-#   run_analyzer(source_folder)
-#       Perform stratified k-fold prediction
-#       Print summary of results
-#       Accuracy, available classes, confusion matrix
-#   run_commands(**args)
-#       if args.run == "demo":
-#           pass
-#       elif args.run == "analyzer":
-#           pass
+#   run_analyzer(model_object, train_folder_path)
+#       # Perform stratified k-fold prediction
+#       # And  print summary of results
+#       cross_validation(train_folder_path)
 #   display_images(orig, preprocessed, actual_label, pred_label)
-#       loop through arrays
-#       display original image on left, preprocessed image right, overlay label on each image
-#       pressing enter progresses user one image set at a time, esc exits/completes demo
-# Child classes:
-#   TypeDemo
-#   SizeDemo
+#       # loop through arrays
+#       # display original image on left, preprocessed image right, overlay label on each image
+#       # pressing enter progresses user one image set at a time, esc exits/completes demo
+#   run_commands(model_object, args, train_folder_path, test_folder_path)
+#       if args.run == "demo":
+#           run_demo(model_object, train_folder_path, test_folder_path)
+#       elif args.run == "analyzer":
+#           run_analyzer(model_object, train_folder_path)
 
 """ DEMO 1 DRIVER """
 # Methods:
 #   parse_args(sys.argv[1:])
 #   run_demo_1(args)
-#
+#       if args.classifier == "type":
+#           train_path = os.path.join(TYPE_DATA, TRAIN_FOLDER)
+#           test_path = os.path.join(TYPE_DATA, TEST_FOLDER)
+#           model = TypeClassificationModel()
+#           DemoClass().run_commands(model, args, train_path, test_path)
+#       elif args.classifier == "size":
+#           train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER)
+#           test_path = os.path.join(SIZE_DATA, TEST_FOLDER)
+#           model = SizeClassificationModel()
+#           DemoClass().run_commands(model, args, train_path, test_path)
+
 
 """ RUN """
 if __name__ == '__main__':
@@ -129,7 +145,7 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
     # Example args
     # args = parser.parse_args("-c type -r demo".split())
-
+    # TODO replace below with driver
     if args.classifier == "type":
         if args.run == "demo":
             print("type", "demo")
