@@ -1,5 +1,3 @@
-# Abstract class:
-#   ImageClassificationAbstract
 # Abstract Methods:
 #   predict(image)
 #   preprocess_image(image)
