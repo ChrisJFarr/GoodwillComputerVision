@@ -24,7 +24,7 @@ class TestImageClassificationValidation(unittest.TestCase):
         # return actual, predicted, available_classes
         raise NotImplementedError
 
-    def test_print_summary(self, actual, predicted, available_classes):
+    def test_print_summary(self):
         # Accuracy, available classes, confusion matrix
         # accuracy_score(actual, predicted)
         # confusion_matrix(actual, predicted, available_classes)
