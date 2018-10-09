@@ -22,6 +22,7 @@ class ImageClassificationAbstract(ABC):
         self._model = model
 
     def get_model(self):
+        assert self._model is not None, "Accessing model prior to training."
         return self._model
 
     # Abstract Methods:
