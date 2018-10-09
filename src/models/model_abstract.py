@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import cv2
+import numpy as np
 
 
 class ImageClassificationAbstract(ABC):
@@ -10,20 +12,26 @@ class ImageClassificationAbstract(ABC):
     @staticmethod
     def get_images_array(image_paths_list):
         # accepts image paths list, returns images array
-        raise NotImplementedError
-
-    @staticmethod
-    def get_classes_array(image_paths_list):
-        # accepts image path, returns image classes
-        raise NotImplementedError
+        image_list = []
+        for file in image_paths_list:
+            image = cv2.imread(file)
+            image_list.append(image)
+        return np.array(image_list)
 
     def set_model(self, model):
         self._model = model
 
     def get_model(self):
+        assert self._model is not None, "Accessing model prior to training."
         return self._model
 
     # Abstract Methods:
+    @staticmethod
+    @abstractmethod
+    def get_classes_array(image_paths_list):
+        # accepts image path, returns image classes
+        return image_paths_list
+
     @abstractmethod
     def train(self, image_paths_list):
         # accepts list of image paths, trains model, stores trained model

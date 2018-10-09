@@ -7,6 +7,10 @@ class TestTypeClassificationModel(unittest.TestCase):
         pass
 
     # Override Abstract Methods:
+    def test_get_classes_array(self):
+        # accepts image path, returns image classes
+        raise NotImplementedError
+
     def test_train(self):
         # accepts list of image paths, trains model, stores trained model
         raise NotImplementedError
