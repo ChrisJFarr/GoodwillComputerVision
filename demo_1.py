@@ -30,6 +30,8 @@ VALIDATION_FOLDER = "val"
 # Data members:
 #   model
 # Abstract Methods:
+#   get_classes_array(image_paths_list)
+#       accepts image path, returns image classes
 #   train(image_paths_list)
 #       accepts list of image paths, trains model, stores trained model
 #   preprocess_images(images_array)
@@ -39,8 +41,6 @@ VALIDATION_FOLDER = "val"
 # Methods:
 #   get_images_array(image_paths_list)
 #       accepts image paths list, returns images array
-#   get_classes_array(image_paths_list)
-#       accepts image path, returns image classes
 # Child classes:
 #   TypeClassificationModel
 #   SizeClassificationModel

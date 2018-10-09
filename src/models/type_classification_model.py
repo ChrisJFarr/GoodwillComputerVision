@@ -7,6 +7,11 @@ class TypeClassificationModel(ImageClassificationAbstract):
         ImageClassificationAbstract.__init__(self)
 
     # Override Abstract Methods:
+    @staticmethod
+    def get_classes_array(image_paths_list):
+        # accepts image path, returns image classes
+        return image_paths_list
+
     def train(self, image_paths_list):
         # accepts list of image paths, trains model, stores trained model
         return None
