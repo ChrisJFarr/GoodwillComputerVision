@@ -1,30 +1,43 @@
+import os
+import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.model_selection import cross_val_predict, StratifiedKFold
 
 
 class ImageClassificationValidation:
+    RANDOM_STATE = 36851234
+    REPEATS = 10
+    SPLITS = 10
 
     def cross_validation_summary(self, train_folder_path, model_class):
-        # actual, predicted, available_classes = cross_validation(train_folder_path, model_class)
-        # print_summary(actual, predicted, available_classes)
-        raise NotImplementedError
+        actual, predicted, available_classes = cross_validation(train_folder_path, model_class)
+        print_summary(actual, predicted, available_classes)
 
-    def cross_validation(self, train_folder_path, model_class):
+    def cross_validation(self, folder_path, model_class):
+
         # get file names
-        # join file names with train folder path
+
+        train_image_paths_list = []
+        for root, dirs, files in os.walk(train_folder_path + "/train"):
+            for name in files:
+                train_image_paths_list.append(os.path.join(root, name))
+
         # create stratified splits (consider repeated)
-        # actual, predicted = [], []
+        rskf = RepeatedStratifiedKFold(n_splits=self.SPLITS, n_repeats=self.REPEATS, random_state=self.RANDOM_STATE)
+
+        actual, predicted = [], []
         # loop
-        #   model_class.train(train_paths)
-        #   model_class.predict(test_paths)
-        #   model_class.get_classes_array(test_paths)
-        #   append actual and predicted
-        # np.unique(model_class.get_classes_array(image_paths_list))
-        # return actual, predicted, available_classes
-        raise NotImplementedError
+        for train_paths, test_paths in rskf.split(train_image_paths_list)]:
+            model_class.train(train_paths)
+            predicted.append = model_class.predict(test_paths)
+            actual.append = model_class.get_classes_array(test_paths)
+        np.unique(model_class.get_classes_array(image_paths_list))
+        return actual, predicted, available_classes
+
 
     def print_summary(self, actual, predicted, available_classes):
-        # Accuracy, available classes, confusion matrix
-        # accuracy_score(actual, predicted)
-        # confusion_matrix(actual, predicted, available_classes)
-        # Print summary, return None
-        raise NotImplementedError
+        #to be done for each class?
+
+        print(accuracy_score(actual, predicted))
+        
+        print(confusion_matrix(actual, predicted))
