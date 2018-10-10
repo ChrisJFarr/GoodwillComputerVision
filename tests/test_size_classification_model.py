@@ -30,7 +30,8 @@ class TestSizeClassificationModel(unittest.TestCase):
     def test_get_classes_array(self):
         # accepts image path, returns image classes
         test_result = self.size_classification_model.get_classes_array(TEST_SIZE_FILENAMES)
-        self.assertTrue(all([a == b for a, b in zip(ACTUAL_TEST_SIZES, test_result)]),
+        y_data = [SIZE_MAP.get(sz.lower()) for sz in ACTUAL_TEST_SIZES]
+        self.assertTrue(all([a == b for a, b in zip(y_data, test_result)]),
                         "Error parsing size classes from file names")
 
     def test_train(self):
@@ -68,7 +69,6 @@ class TestSizeClassificationModel(unittest.TestCase):
         image_paths = [os.path.join(SIZE_CLASSIFICATION_DATA, file_name) for file_name in test_file_names]
         # Extract labels
         y_data = self.size_classification_model.get_classes_array(test_file_names)
-        y_data = [SIZE_MAP.get(sz.lower()) for sz in y_data]
         # Train model
         self.size_classification_model.train(image_paths)
         # Generate predictions

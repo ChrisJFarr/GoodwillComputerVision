@@ -22,8 +22,6 @@ kiwisolver==1.0.1
 Markdown==2.6.11
 MarkupSafe==1.0
 matplotlib==3.0.0
-mkl-fft==1.0.4
-mkl-random==1.0.1
 more-itertools==4.3.0
 networkx==2.2
 numpy==1.15.2

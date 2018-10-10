@@ -27,6 +27,7 @@ class SizeClassificationModel(ImageClassificationAbstract):
         classes = []
         for file_name in image_paths_list:
             classes.append(file_name.split("_")[1])
+        classes = [SIZE_MAP.get(sz.lower()) for sz in classes]
         return np.array(classes)
 
     def train(self, image_paths_list):
@@ -42,7 +43,6 @@ class SizeClassificationModel(ImageClassificationAbstract):
         # Augment data
         if AUGMENT:
             x_data, y_data = self.created_augmented_data(x_data, y_data)
-        y_data = [SIZE_MAP.get(sz.lower()) for sz in y_data]
         # Randomly shuffle
         rand_i = list(range(len(x_data)))
         np.random.shuffle(rand_i)
