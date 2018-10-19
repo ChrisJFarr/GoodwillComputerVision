@@ -15,6 +15,7 @@ class ImageClassificationAbstract(ABC):
         image_list = []
         for file in image_paths_list:
             image = cv2.imread(file)
+            assert image is not None, "Issue loading file:" + file
             image_list.append(image)
         return np.array(image_list)
 
