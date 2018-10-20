@@ -13,10 +13,10 @@ Train/test split
 
 # Variables
 # Source folder
-source_folder = "src/data/type_data/train"
+source_folder = "src/data/size_data/old_train"
 # validation folder path
-train_path = "src/data/type_data/new_train"
-test_path = "src/data/type_data/test"
+train_path = "src/data/size_data/train"
+test_path = "src/data/size_data/test"
 
 # Constants
 TEST_SIZE = 20

@@ -9,13 +9,14 @@ import sys
 import os
 import numpy as np
 from matplotlib import pyplot as plt
+from sklearn.metrics import accuracy_score
 
 from src.models.size_classification_model import SizeClassificationModel
 from src.models.type_classification_model import TypeClassificationModel
 
 # CONSTANTS
 SIZE_CLASSIFICATION_FOLDER = "t_shirt"  # womens_jeans, womens_short_sleeve, womens_long_sleeve
-SIZE_DATA = os.path.join("src/data/size_data", SIZE_CLASSIFICATION_FOLDER)
+SIZE_DATA = "src/data/size_data"
 TYPE_DATA = "src/data/type_data"
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
@@ -73,7 +74,10 @@ class DemoClass:
             # plt.pause(0.05)
             plt.draw()
             plt.waitforbuttonpress()
-        input("Click to continue...")
+        test_score = accuracy_score(actual_classes, predicted_classes) * 100
+        output_message = "Sample test accuracy: %.1f" % test_score + "%"
+        print(output_message)
+        input("End of test images, click to exit...")
         return
 
     def run_commands(self, model_object, args, train_folder_path, test_folder_path):
@@ -91,7 +95,7 @@ def get_type_model_files(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for name in files:
             image_paths.append(os.path.join(root, name))
-    np.random.seed(2017)
+    # np.random.seed(2017)
     np.random.shuffle(image_paths)
     return image_paths
 
@@ -99,7 +103,7 @@ def get_type_model_files(folder_path):
 def get_size_model_files(folder_path):
     file_names = os.listdir(folder_path)
     image_paths = [os.path.join(folder_path, file_name) for file_name in file_names]
-    np.random.seed(2017)
+    # np.random.seed(2017)
     np.random.shuffle(image_paths)
     return image_paths
 
@@ -118,13 +122,13 @@ def run_demo_1(args):
         DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
     elif args.classifier == "size":
         # Build train/test folder paths
-        train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER)
-        test_path = os.path.join(SIZE_DATA, TEST_FOLDER)
+        train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER, SIZE_CLASSIFICATION_FOLDER)
+        test_path = os.path.join(SIZE_DATA, TEST_FOLDER, SIZE_CLASSIFICATION_FOLDER)
         # Get train/test file paths
         train_file_paths = get_size_model_files(train_path)
         test_file_paths = get_size_model_files(test_path)
         model = SizeClassificationModel()
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths)
+        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
 
 
 """ RUN """
@@ -162,5 +166,6 @@ if __name__ == '__main__':
     # Parse arguments from command line
     # args = parser.parse_args(sys.argv[1:])
     # Example args for testing in console
-    args = parser.parse_args("-c type -r demo".split())
+    # args = parser.parse_args("-c type -r demo".split())
+    args = parser.parse_args("-c size -r demo".split())
     run_demo_1(args)
