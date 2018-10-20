@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import sys
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score
@@ -185,9 +186,9 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--build', action='store_true')
 
     # Parse arguments from command line
-    # args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args(sys.argv[1:])
     # Example args for testing in console
     # args = parser.parse_args("--classifier size --run demo".split())
-    args = parser.parse_args("--classifier type --run demo -b".split())
+    # args = parser.parse_args("--classifier type --run demo".split())
 
     run_demo_1(args)
