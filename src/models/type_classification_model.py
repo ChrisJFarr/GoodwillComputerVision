@@ -51,8 +51,6 @@ class TypeClassificationModel(ImageClassificationAbstract):
         file_names = [os.path.basename(image_path) for image_path in image_paths_list]
         # file_names = [image_path.split("/")[-1] for image_path in image_paths_list]
         y_data = self.get_classes_array(file_names)
-        print("y_data", y_data)
-        print("image_paths_list", image_paths_list)
         # Augment data
         if augment:
             x_data, y_data = self.created_augmented_data(x_data, y_data)
