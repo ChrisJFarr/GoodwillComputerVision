@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
 import cv2
 import numpy as np
+from sklearn.externals import joblib
 
 
 class ImageClassificationAbstract(ABC):
 
-    def __init__(self):
+    def __init__(self, model_path=None):
         self._model = None
+        self.model_path = model_path
+        self.load_model(self.model_path)
 
     # Methods:
     @staticmethod
@@ -23,8 +26,28 @@ class ImageClassificationAbstract(ABC):
         self._model = model
 
     def get_model(self):
-        assert self._model is not None, "Accessing model prior to training."
         return self._model
+
+    def load_model(self, model_path):
+        # Copy constructor
+        if model_path is not None:
+            try:
+                model = joblib.load(model_path)
+                self._model = model
+            except FileNotFoundError:
+                print("No model to load...")
+        return
+
+    def save_model(self):
+        if self.model_path is not None:
+            try:
+                joblib.dump(self._model, self.model_path)
+            except Exception as e:
+                print(e)
+                print("Unable to save model...")
+        else:
+            print("No model path available...")
+        return
 
     # Abstract Methods:
     @staticmethod

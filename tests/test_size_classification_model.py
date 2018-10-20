@@ -1,16 +1,11 @@
 from src.models.size_classification_model import SizeClassificationModel, TARGET_SIZE, SIZE_MAP
 import unittest
 import os
-from random import shuffle
 import numpy as np
 from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score
 import warnings
 warnings.filterwarnings("ignore")
-
-# rando_list = os.listdir(os.path.join(os.getcwd(), "src", "data", "size_data", "train", "t_shirt"))
-# shuffle(rando_list)
-# rando_list
 
 # Test Support Constants
 TEST_SIZE_FILENAMES = ['tshirts_medium_good_anntaylorloft_82.jpg', 'tshirts_small_poor_fruitoftheloom_108.jpg',
@@ -18,7 +13,6 @@ TEST_SIZE_FILENAMES = ['tshirts_medium_good_anntaylorloft_82.jpg', 'tshirts_smal
                        'tshirts_large_poor_champion_11.jpg']
 ACTUAL_TEST_CLASSES = ["medium", "small", "medium", "2xl", "large"]
 SIZE_CLASSIFICATION_DATA = "src/data/size_data/train/t_shirt"
-# SIZE_CLASSIFICATION_DATA = "../src/data/size_data/train/t_shirt"
 
 
 class TestSizeClassificationModel(unittest.TestCase):

@@ -5,7 +5,6 @@
 """
 
 import argparse
-import sys
 import os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -18,9 +17,10 @@ from src.models.type_classification_model import TypeClassificationModel
 SIZE_CLASSIFICATION_FOLDER = "t_shirt"  # womens_jeans, womens_short_sleeve, womens_long_sleeve
 SIZE_DATA = "src/data/size_data"
 TYPE_DATA = "src/data/type_data"
+SIZE_MODEL_PATH = "src/models/cached/size.joblib"
+TYPE_MODEL_PATH = "src/models/cached/type.joblib"
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
-# VALIDATION_FOLDER = "val"
 
 # IMPLEMENTATION
 # TODO Implementation Steps:
@@ -36,8 +36,12 @@ TEST_FOLDER = "test"
 class DemoClass:
     # Methods:
     def run_demo(self, model_object, train_file_paths, test_file_paths):
-        # train model
-        model_object.train(train_file_paths)
+        if model_object.get_model() is None:
+            # train model
+            model_object.train(train_file_paths)
+            if model_object.model_path is not None:
+                print("Saving model at: %s" % model_object.model_path)
+                model_object.save_model()
         # create test predictions
         predicted_classes = model_object.predict(test_file_paths)
         # get actual classes
@@ -48,6 +52,7 @@ class DemoClass:
         preprocessed = model_object.preprocess_images(orig)
         # print model validation summary
         self.display_images(orig, preprocessed, actual_classes, predicted_classes)
+        return
 
     @staticmethod
     def run_analyzer(model_object, train_folder_path):
@@ -62,7 +67,7 @@ class DemoClass:
         # display original image on left, preprocessed image right, overlay label on each image
         # pressing enter progresses user one image set at a time, esc exits/completes demo
         # assert orig.shape == preprocessed.shape, "Mismatching input shapes"
-        print("Click on the images to continue loop...")
+        print("Click on the images to continue loop...", "")
         for i in range(orig.shape[0]):
             f = plt.figure()
             f.add_subplot(1, 2, 1)
@@ -76,8 +81,8 @@ class DemoClass:
             plt.waitforbuttonpress()
         test_score = accuracy_score(actual_classes, predicted_classes) * 100
         output_message = "Sample test accuracy: %.1f" % test_score + "%"
-        print(output_message)
-        input("End of test images, click to exit...")
+        print(output_message, "")
+        input("End of test images, press enter to exit...")
         return
 
     def run_commands(self, model_object, args, train_folder_path, test_folder_path):
@@ -95,7 +100,7 @@ def get_type_model_files(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for name in files:
             image_paths.append(os.path.join(root, name))
-    # np.random.seed(2017)
+    np.random.seed(2017)
     np.random.shuffle(image_paths)
     return image_paths
 
@@ -103,7 +108,7 @@ def get_type_model_files(folder_path):
 def get_size_model_files(folder_path):
     file_names = os.listdir(folder_path)
     image_paths = [os.path.join(folder_path, file_name) for file_name in file_names]
-    # np.random.seed(2017)
+    np.random.seed(2017)
     np.random.shuffle(image_paths)
     return image_paths
 
@@ -117,7 +122,11 @@ def run_demo_1(args):
         train_file_paths = get_type_model_files(train_path)
         test_file_paths = get_type_model_files(test_path)
         # Create a type classification model instance
-        model = TypeClassificationModel()
+        if args.build:
+            model = TypeClassificationModel()
+            model.model_path = TYPE_MODEL_PATH
+        else:
+            model = TypeClassificationModel(TYPE_MODEL_PATH)
         # Run the demo
         DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
     elif args.classifier == "size":
@@ -127,7 +136,12 @@ def run_demo_1(args):
         # Get train/test file paths
         train_file_paths = get_size_model_files(train_path)
         test_file_paths = get_size_model_files(test_path)
-        model = SizeClassificationModel()
+        # Create a type classification model instance
+        if args.build:
+            model = SizeClassificationModel()
+            model.model_path = SIZE_MODEL_PATH
+        else:
+            model = SizeClassificationModel(SIZE_MODEL_PATH)
         DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
 
 
@@ -163,9 +177,17 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--run', nargs="?", choices=["demo", "analyzer"], type=str,
                         help="Either `demo` or `analyzer`", metavar='RUN', default="demo")
 
+    # input: Force build
+    # No argument, pass -b for True, don't pass for False
+    # a) True, if cached model available load model
+    # b) False, train new model and cache
+
+    parser.add_argument('-b', '--build', action='store_true')
+
     # Parse arguments from command line
     # args = parser.parse_args(sys.argv[1:])
     # Example args for testing in console
-    # args = parser.parse_args("-c type -r demo".split())
-    args = parser.parse_args("-c size -r demo".split())
+    # args = parser.parse_args("--classifier size --run demo".split())
+    args = parser.parse_args("--classifier type --run demo -b".split())
+
     run_demo_1(args)

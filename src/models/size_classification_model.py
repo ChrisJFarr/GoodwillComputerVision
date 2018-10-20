@@ -13,13 +13,13 @@ SIZE_MAP = {
 }
 # 3xl-large, medium-xsmall
 AUGMENT = True
-AUGMENTED_SIZE = 1000
+AUGMENTED_SIZE = 500
 
 
 class SizeClassificationModel(ImageClassificationAbstract):
 
-    def __init__(self):
-        ImageClassificationAbstract.__init__(self)
+    def __init__(self, *args, **kwargs):
+        ImageClassificationAbstract.__init__(self, *args, **kwargs)
 
     # Override Abstract Methods:
     @staticmethod

@@ -6,7 +6,6 @@ from scipy.stats import itemfreq
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.svm import LinearSVC
-from sklearn.preprocessing import MinMaxScaler
 import os
 
 TARGET_SIZE = (400, 600)
@@ -15,9 +14,8 @@ AUGMENTED_SIZE = 200
 
 class TypeClassificationModel(ImageClassificationAbstract):
 
-    def __init__(self):
-        ImageClassificationAbstract.__init__(self)
-        self.x_scaler = MinMaxScaler(feature_range=(0, 1))
+    def __init__(self, *args, **kwargs):
+        ImageClassificationAbstract.__init__(self, *args, **kwargs)
 
     # Override Abstract Methods:
     def train(self, image_paths_list):
@@ -35,8 +33,6 @@ class TypeClassificationModel(ImageClassificationAbstract):
     def predict(self, image_paths_list):
         # accepts list of image paths, returns predicted classes
         x_data, y_data = self.get_x_y_data(image_paths_list, augment=False)
-        # Scale features
-        # x_data = self.x_scaler.transform(x_data)
         # Get predictions
         predictions = self.get_model().predict(x_data)
         return predictions
