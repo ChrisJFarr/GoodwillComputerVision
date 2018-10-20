@@ -38,14 +38,15 @@ class DemoClass:
         # train model
         model_object.train(train_file_paths)
         # create test predictions
-        predictions = model_object.predict(test_file_paths)
+        predicted_classes = model_object.predict(test_file_paths)
         # get actual classes
-        actual_classes = model_object.get_classes_array(test_file_paths)
+        test_file_names = [os.path.basename(image_path) for image_path in test_file_paths]
+        actual_classes = model_object.get_classes_array(test_file_names)
         # Create list of original test images
         orig = model_object.get_images_array(test_file_paths)
         preprocessed = model_object.preprocess_images(orig)
         # print model validation summary
-        self.display_images(orig, preprocessed, actual_classes, predictions)
+        self.display_images(orig, preprocessed, actual_classes, predicted_classes)
 
     @staticmethod
     def run_analyzer(model_object, train_folder_path):
@@ -55,18 +56,25 @@ class DemoClass:
         raise NotImplementedError
 
     @staticmethod
-    def display_images(orig, preprocessed, actual_label, pred_label):
+    def display_images(orig, preprocessed, actual_classes, predicted_classes):
         # loop through arrays
         # display original image on left, preprocessed image right, overlay label on each image
         # pressing enter progresses user one image set at a time, esc exits/completes demo
-        assert orig.shape == preprocessed.shape, "Mismatching input shapes"
+        # assert orig.shape == preprocessed.shape, "Mismatching input shapes"
+        print("Click on the images to continue loop...")
         for i in range(orig.shape[0]):
             f = plt.figure()
             f.add_subplot(1, 2, 1)
             plt.imshow(orig[i])
+            plt.title("Actual: %s" % actual_classes[i])
             f.add_subplot(1, 2, 2)
-            plt.imshow(preprocessed[i])
-        plt.show(block=True)
+            plt.imshow(preprocessed[i], cmap="gray")
+            plt.title("Predicted: %s" % predicted_classes[i])
+            # plt.pause(0.05)
+            plt.draw()
+            plt.waitforbuttonpress()
+        input("Click to continue...")
+        return
 
     def run_commands(self, model_object, args, train_folder_path, test_folder_path):
         if args.run == "demo":
@@ -107,7 +115,7 @@ def run_demo_1(args):
         # Create a type classification model instance
         model = TypeClassificationModel()
         # Run the demo
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths)
+        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
     elif args.classifier == "size":
         # Build train/test folder paths
         train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER)

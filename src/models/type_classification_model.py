@@ -95,7 +95,7 @@ class TypeClassificationModel(ImageClassificationAbstract):
     def hog_feature_extractor(image):
         im_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         hog_feature = hog(im_gray, orientations=8, pixels_per_cell=(32, 32),
-                          cells_per_block=(2, 2))
+                          cells_per_block=(2, 2), block_norm="L1")  # L2-Hys
         return hog_feature
 
     @staticmethod
