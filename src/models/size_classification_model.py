@@ -3,7 +3,8 @@ import numpy as np
 import cv2
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score
+import os
+
 
 TARGET_SIZE = (120, 180)
 SIZE_MAP = {
@@ -12,21 +13,25 @@ SIZE_MAP = {
 }
 # 3xl-large, medium-xsmall
 AUGMENT = True
-AUGMENTED_SIZE = 1000
+AUGMENTED_SIZE = 500
 
 
 class SizeClassificationModel(ImageClassificationAbstract):
 
-    def __init__(self):
-        ImageClassificationAbstract.__init__(self)
+    def __init__(self, *args, **kwargs):
+        ImageClassificationAbstract.__init__(self, *args, **kwargs)
 
     # Override Abstract Methods:
     @staticmethod
-    def get_classes_array(image_paths_list):
+    def get_classes_array(image_names_list):
         # accepts image path, returns image classes
         classes = []
+<<<<<<< HEAD
         for file_name in image_paths_list:
             print(file_name.split("_")[1])
+=======
+        for file_name in image_names_list:
+>>>>>>> master
             classes.append(file_name.split("_")[1])
         classes = [SIZE_MAP.get(sz.lower()) for sz in classes]
         return np.array(classes)
@@ -39,15 +44,11 @@ class SizeClassificationModel(ImageClassificationAbstract):
         x_data = self.preprocess_images(images_array)
         # Extract y_data
         # Get file names from image paths
-        file_names = [image_path.split("\\")[-1] for image_path in image_paths_list]
+        file_names = [os.path.basename(image_path) for image_path in image_paths_list]
         y_data = self.get_classes_array(file_names)
         # Augment data
         if AUGMENT:
             x_data, y_data = self.created_augmented_data(x_data, y_data)
-        # Randomly shuffle
-        rand_i = list(range(len(x_data)))
-        np.random.shuffle(rand_i)
-        x_data, y_data = np.array([x_data[i] for i in rand_i]), [y_data[i] for i in rand_i]
         # Flatten and scale image data
         x_data = np.array([img.flatten() / 255. for img in x_data])
         # Train model
@@ -76,7 +77,6 @@ class SizeClassificationModel(ImageClassificationAbstract):
             image = image_list[i]
             # accepts images array, return preprocessed images array
             image = cv2.resize(image, TARGET_SIZE)
-            image.shape
             # Convert to RGB colorspace
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # blur the image
