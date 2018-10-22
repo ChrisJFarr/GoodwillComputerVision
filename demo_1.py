@@ -9,7 +9,7 @@ import os
 
 from src.models.size_classification_model import SizeClassificationModel
 from src.models.type_classification_model import TypeClassificationModel
-
+from src.model_validation import ImageClassificationValidation
 # CONSTANTS
 SIZE_CLASSIFICATION_FOLDER = "t_shirt"  # womens_jeans, womens_short_sleeve, womens_long_sleeve
 SIZE_DATA = os.path.join("src\\data\\size_data", SIZE_CLASSIFICATION_FOLDER)
@@ -89,10 +89,8 @@ class DemoClass:
 
     @staticmethod
     def run_analyzer(model_object, train_folder_path):
-        # # Perform stratified k-fold prediction
-        # # And  print summary of results
-        # cross_validation(train_folder_path)
-        raise NotImplementedError
+        validation = ImageClassificationValidation()
+        validation.cross_validation_summary(train_folder_path, model_object)
 
     @staticmethod
     def display_images(orig, preprocessed, actual_label, pred_label):
@@ -106,24 +104,22 @@ class DemoClass:
         # if args.run == "demo":
         #   run_demo(model_object, train_folder_path, test_folder_path)
         # elif args.run == "analyzer":
-        #   run_analyzer(model_object, train_folder_path)
-        raise NotImplementedError
+        run_analyzer(model_object, train_folder_path)
 
-
-""" DEMO 1 DRIVER """
 
 
 def run_demo_1(args):
-    if args.classifier == "type":
-        train_path = os.path.join(TYPE_DATA, TRAIN_FOLDER)
-        test_path = os.path.join(TYPE_DATA, TEST_FOLDER)
-        model = TypeClassificationModel()
-        DemoClass().run_commands(model, args, train_path, test_path)
-    elif args.classifier == "size":
+#    if args.classifier == "type":
+#        test_path = os.path.join(TYPE_DATA, TEST_FOLDER)
+#        model = TypeClassificationModel()
+#        DemoClass().run_analyzer(model, train_path)
+#        #DemoClass().run_commands(model, args, train_path, test_path)
+#    elif args.classifier == "size":
         train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER)
         test_path = os.path.join(SIZE_DATA, TEST_FOLDER)
         model = SizeClassificationModel()
-        DemoClass().run_commands(model, args, train_path, test_path)
+        DemoClass().run_analyzer(model, train_path)
+        #DemoClass().run_commands(model, args, train_path, test_path)
 
 
 """ RUN """

@@ -26,6 +26,7 @@ class SizeClassificationModel(ImageClassificationAbstract):
         # accepts image path, returns image classes
         classes = []
         for file_name in image_paths_list:
+            print(file_name.split("_")[1])
             classes.append(file_name.split("_")[1])
         classes = [SIZE_MAP.get(sz.lower()) for sz in classes]
         return np.array(classes)
