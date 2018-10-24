@@ -21,6 +21,8 @@ SIZE_DATA = "src/data/size_data"
 TYPE_DATA = "src/data/type_data"
 SIZE_MODEL_PATH = "src/models/cached/size.joblib"
 TYPE_MODEL_PATH = "src/models/cached/type.joblib"
+SIZE_ANALYZER_CACHE_PATH = "src/models/cached/size_analyzer.pkl"
+TYPE_ANALYZER_CACHE_PATH = "src/models/cached/type_analyzer.pkl"
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
 
@@ -59,6 +61,7 @@ class DemoClass:
     @staticmethod
     def run_analyzer(model_object, train_folder_path):
         validation = ImageClassificationValidation()
+
         validation.cross_validation_summary(train_folder_path, model_object)
 
     @staticmethod
