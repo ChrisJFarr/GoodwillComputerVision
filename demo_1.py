@@ -13,6 +13,7 @@ from sklearn.metrics import accuracy_score
 
 from src.models.size_classification_model import SizeClassificationModel
 from src.models.type_classification_model import TypeClassificationModel
+from src.model_validation import ImageClassificationValidation
 
 # CONSTANTS
 SIZE_CLASSIFICATION_FOLDER = "t_shirt"  # womens_jeans, womens_short_sleeve, womens_long_sleeve
@@ -57,10 +58,8 @@ class DemoClass:
 
     @staticmethod
     def run_analyzer(model_object, train_folder_path):
-        # # Perform stratified k-fold prediction
-        # # And  print summary of results
-        # cross_validation(train_folder_path)
-        raise NotImplementedError
+        validation = ImageClassificationValidation()
+        validation.cross_validation_summary(train_folder_path, model_object)
 
     @staticmethod
     def display_images(orig, preprocessed, actual_classes, predicted_classes):
