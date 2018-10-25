@@ -82,8 +82,21 @@ class TypeClassificationModel(ImageClassificationAbstract):
             image = image_list[i]
             # accepts images array, return preprocessed images array
             image = cv2.resize(image, TARGET_SIZE)
-            # Convert to grayscale
-            # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # Experimental image enhancements
+            # https://chrisalbon.com/machine_learning/preprocessing_images/enhance_contrast_of_color_image/
+            # Convert to YUV
+            # image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+            # Apply histogram equalization
+            # image[:, :, 0] = cv2.equalizeHist(image[:, :, 0])
+            # Convert to BGR
+            # image = cv2.cvtColor(image, cv2.COLOR_YUV2BGR)
+            # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv
+            lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+            cl = clahe.apply(l)
+            limg = cv2.merge((cl, a, b))
+            image = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
             image_list[i] = image
         return np.array(image_list)
 

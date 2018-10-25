@@ -29,7 +29,6 @@ TEST_FOLDER = "test"
 # 2. Pull code from FashionClassification repo for model implementation
 # 3. Test and build all classes/methods/abstract methods
 
-# TODO save and load model options for train and demo functions respectively
 
 """ DEMO 1 IMPLEMENTATION """
 
@@ -73,11 +72,13 @@ class DemoClass:
             f = plt.figure()
             f.add_subplot(1, 2, 1)
             plt.imshow(orig[i])
-            plt.title("Actual: %s" % actual_classes[i])
+            plt.title("Input Image \n Actual label: %s" % actual_classes[i])
+            plt.axis("off")
             f.add_subplot(1, 2, 2)
             plt.imshow(preprocessed[i], cmap="gray")
-            plt.title("Predicted: %s" % predicted_classes[i])
+            plt.title("Preprocessed Image \n Predicted label: %s" % predicted_classes[i])
             # plt.pause(0.05)
+            plt.axis("off")
             plt.draw()
             plt.waitforbuttonpress()
         test_score = accuracy_score(actual_classes, predicted_classes) * 100
@@ -129,7 +130,7 @@ def run_demo_1(args):
         else:
             model = TypeClassificationModel(TYPE_MODEL_PATH)
         # Run the demo
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
+        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:20])
     elif args.classifier == "size":
         # Build train/test folder paths
         train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER, SIZE_CLASSIFICATION_FOLDER)
@@ -143,13 +144,12 @@ def run_demo_1(args):
             model.model_path = SIZE_MODEL_PATH
         else:
             model = SizeClassificationModel(SIZE_MODEL_PATH)
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
+        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:20])
 
 
 """ RUN """
 if __name__ == '__main__':
     # USER INTERFACE
-
     usageStr = """
       USAGE:      python demo_1.py <options>
       EXAMPLES:   (1) python demo_1.py --classifier type --run demo
@@ -183,12 +183,11 @@ if __name__ == '__main__':
     # a) True, if cached model available load model
     # b) False, train new model and cache
 
-    parser.add_argument('-b', '--build', action='store_true')
+    parser.add_argument('-b', '--build', action='store_true', help="Force new model build")
 
     # Parse arguments from command line
     args = parser.parse_args(sys.argv[1:])
     # Example args for testing in console
     # args = parser.parse_args("--classifier size --run demo".split())
     # args = parser.parse_args("--classifier type --run demo".split())
-
     run_demo_1(args)
