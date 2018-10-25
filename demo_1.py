@@ -138,7 +138,7 @@ def run_demo_1(args):
             model = TypeClassificationModel(model_path=TYPE_MODEL_PATH)
             validation = ImageClassificationValidation(cache_path=TYPE_ANALYZER_CACHE_PATH)
         # Run the demo
-        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths[0:10])
+        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths)
     elif args.classifier == "size":
         # Build train/test folder paths
         train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER, SIZE_CLASSIFICATION_FOLDER)
@@ -157,7 +157,7 @@ def run_demo_1(args):
         else:
             model = SizeClassificationModel(model_path=SIZE_MODEL_PATH)
             validation = ImageClassificationValidation(cache_path=SIZE_ANALYZER_CACHE_PATH)
-        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths[0:10])
+        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths)
 
 
 """ RUN """

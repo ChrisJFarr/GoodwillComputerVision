@@ -38,6 +38,7 @@ class TypeClassificationModel(ImageClassificationAbstract):
         return predictions
 
     def get_x_y_data(self, image_paths_list, augment=False):
+        # TODO make preprocessing parallel, and explore storing and retrieving preprocessed images
         # Load images
         images_array = self.get_images_array(image_paths_list)
         # Preprocess x_data

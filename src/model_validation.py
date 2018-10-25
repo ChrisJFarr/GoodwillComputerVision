@@ -10,7 +10,7 @@ from src.validation_abstract import ValidationAbstract
 class ImageClassificationValidation(ValidationAbstract):
     RANDOM_STATE = 36851234
     REPEATS = 1
-    SPLITS = 10
+    SPLITS = 5
 
     def __init__(self, *args, **kwargs):
         ValidationAbstract.__init__(self, *args, **kwargs)
