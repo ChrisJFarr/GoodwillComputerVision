@@ -13,24 +13,8 @@ class ImageClassificationValidation(ValidationAbstract):
     REPEATS = 1
     SPLITS = 10
 
-    def __init__(self, cache_path=None):
-        # TODO start here
-        pass
-
-    def save(self, actual, predicted, available_classes, cache_path):
-        try:
-            pickle.dumps((actual, predicted, available_classes), open(cache_path, "wb"))
-        except Exception as e:
-            print("Unable to store analyzer contents...")
-        return
-
-    def load(self, cache_path):
-        actual, predicted, available_classes = None, None, None
-        try:
-            actual, predicted, available_classes = pickle.loads(open(cache_path, "rb"))
-        except FileNotFoundError:
-            print("Unable to load analyzer contents...")
-        return actual, predicted, available_classes
+    def __init__(self, *args, **kwargs):
+        ValidationAbstract.__init__(self, *args, **kwargs)
 
     def cross_validation_stratified(self, train_folder_path, model_class):
         # create stratified splits (consider repeated)
@@ -47,7 +31,10 @@ class ImageClassificationValidation(ValidationAbstract):
             test_image_names_list = [os.path.basename(image_path) for image_path in x_test]
             actual.extend(model_class.get_classes_array(test_image_names_list))
         available_classes = np.unique(model_class.get_classes_array(train_image_names_list))
-
+        # Store variables for caching support
+        self.actual = actual
+        self.predicted = predicted
+        self.available_classes = available_classes
         return actual, predicted, available_classes
 
     @staticmethod
@@ -93,11 +80,8 @@ class ImageClassificationValidation(ValidationAbstract):
         plt.show()
         return
 
-    def cross_validation_summary(self, train_folder_path, model_class, cache_path=None):
-        actual, predicted, available_classes = None, None, None
-        if cache_path is not None:
-            actual, predicted, available_classes = self.load(cache_path)
-        if actual is None or predicted is None or available_classes is None:
-            actual, predicted, available_classes = self.cross_validation_stratified(train_folder_path, model_class)
-        self.print_summary(actual, predicted, available_classes)
+    def cross_validation_summary(self, train_folder_path, model_class):
+        if self.actual is None or self.predicted is None or self.available_classes is None:
+            self.cross_validation_stratified(train_folder_path, model_class)
+        self.print_summary(self.actual, self.predicted, self.available_classes)
         return

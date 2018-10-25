@@ -59,10 +59,9 @@ class DemoClass:
         return
 
     @staticmethod
-    def run_analyzer(model_object, train_folder_path):
-        validation = ImageClassificationValidation()
-
-        validation.cross_validation_summary(train_folder_path, model_object)
+    def run_analyzer(validation_object, model_object, train_folder_path):
+        validation_object.cross_validation_summary(train_folder_path, model_object)
+        validation_object.save()
 
     @staticmethod
     def display_images(orig, preprocessed, actual_classes, predicted_classes):
@@ -88,11 +87,12 @@ class DemoClass:
         input("End of test images, press enter to exit...")
         return
 
-    def run_commands(self, model_object, args, train_folder_path, test_folder_path):
+    def run_commands(self, model_object, validation_object, args, train_folder_path, test_folder_path):
+        # TODO move object instantiation into run_demo or run_analyzer functions for efficiency
         if args.run == "demo":
             self.run_demo(model_object, train_folder_path, test_folder_path)
         elif args.run == "analyzer":
-            self.run_analyzer(model_object, train_folder_path)
+            self.run_analyzer(validation_object, model_object, train_folder_path)
 
 
 """ DEMO 1 DRIVER """
@@ -126,12 +126,18 @@ def run_demo_1(args):
         test_file_paths = get_type_model_files(test_path)
         # Create a type classification model instance
         if args.build:
+            # Instantiate classes without cache path
             model = TypeClassificationModel()
+            validation = ImageClassificationValidation()
+            # Set cache paths for saving new build
             model.model_path = TYPE_MODEL_PATH
+            validation.cache_path = ImageClassificationValidation()
         else:
+            # Instantiate with cache paths for loading if available
             model = TypeClassificationModel(TYPE_MODEL_PATH)
+            validation = ImageClassificationValidation(TYPE_ANALYZER_CACHE_PATH)
         # Run the demo
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
+        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths[0:10])
     elif args.classifier == "size":
         # Build train/test folder paths
         train_path = os.path.join(SIZE_DATA, TRAIN_FOLDER, SIZE_CLASSIFICATION_FOLDER)
@@ -141,11 +147,16 @@ def run_demo_1(args):
         test_file_paths = get_size_model_files(test_path)
         # Create a type classification model instance
         if args.build:
+            # Instantiate classes without cache path
             model = SizeClassificationModel()
+            validation = ImageClassificationValidation()
+            # Set cache paths for saving new build
             model.model_path = SIZE_MODEL_PATH
+            validation.cache_path = SIZE_ANALYZER_CACHE_PATH
         else:
             model = SizeClassificationModel(SIZE_MODEL_PATH)
-        DemoClass().run_commands(model, args, train_file_paths, test_file_paths[0:10])
+            validation = ImageClassificationValidation(SIZE_ANALYZER_CACHE_PATH)
+        DemoClass().run_commands(model, validation, args, train_file_paths, test_file_paths[0:10])
 
 
 """ RUN """
