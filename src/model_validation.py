@@ -9,7 +9,7 @@ from src.validation_abstract import ValidationAbstract
 
 class ImageClassificationValidation(ValidationAbstract):
     RANDOM_STATE = 36851234
-    REPEATS = 3
+    REPEATS = 1
     SPLITS = 10
 
     def __init__(self, *args, **kwargs):
@@ -21,6 +21,7 @@ class ImageClassificationValidation(ValidationAbstract):
         train_image_names_list = [os.path.basename(image_path) for image_path in train_folder_path]
         actual, predicted = [], []
         # loop
+        # TODO add status bar based on number of splits
         for train_paths, test_paths in rskf.split(train_folder_path,
                                                   model_class.get_classes_array(train_image_names_list)):
             x_train = list(train_folder_path[i] for i in train_paths)
