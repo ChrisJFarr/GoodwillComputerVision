@@ -83,50 +83,35 @@ class TypeClassificationModel(ImageClassificationAbstract):
             image = image_list[i]
             # # accepts images array, return preprocessed images array
             image = cv2.resize(image, TARGET_SIZE)
-            # # Experimental image enhancements
-            # # https://chrisalbon.com/machine_learning/preprocessing_images/enhance_contrast_of_color_image/
-            # # Convert to YUV
-            # # image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
-            # # Apply histogram equalization
-            # # image[:, :, 0] = cv2.equalizeHist(image[:, :, 0])
-            # # Convert to BGR
-            # # image = cv2.cvtColor(image, cv2.COLOR_YUV2BGR)
-            # # https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv
-            # lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+            # # Image Enhancement (future enhancement, working)
+            # # Crop to only the object
+            # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # gray_blur = cv2.GaussianBlur(gray, (15, 15), 0)
+            # thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 1)
+            # kernel = np.ones((5, 5), np.uint8)
+            # closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+            # cont_img = closing.copy()
+            # _, contours, hierarchy = cv2.findContours(cont_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # sorted_contours = sorted(contours, key=lambda x: cv2.contourArea(x))
+            # rect = cv2.minAreaRect(sorted_contours[-1])
+            # box = cv2.boxPoints(rect)
+            # box = np.int0(box)
+            # x1 = max(min(box[:, 0]), 0)
+            # y1 = max(min(box[:, 1]), 0)
+            # x2 = max(max(box[:, 0]), 0)
+            # y2 = max(max(box[:, 1]), 0)
+            #
+            # # Enhance
+            # image_cropped = image[y1:y2, x1:x2]
+            # lab = cv2.cvtColor(image_cropped, cv2.COLOR_BGR2LAB)
             # l, a, b = cv2.split(lab)
             # clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
             # cl = clahe.apply(l)
             # limg = cv2.merge((cl, a, b))
-            # image = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-
-            # Crop to only the object
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            gray_blur = cv2.GaussianBlur(gray, (15, 15), 0)
-            thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 1)
-            kernel = np.ones((5, 5), np.uint8)
-            closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-            cont_img = closing.copy()
-            _, contours, hierarchy = cv2.findContours(cont_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            sorted_contours = sorted(contours, key=lambda x: cv2.contourArea(x))
-            rect = cv2.minAreaRect(sorted_contours[-1])
-            box = cv2.boxPoints(rect)
-            box = np.int0(box)
-            x1 = max(min(box[:, 0]), 0)
-            y1 = max(min(box[:, 1]), 0)
-            x2 = max(max(box[:, 0]), 0)
-            y2 = max(max(box[:, 1]), 0)
-
-            # Enhance
-            image_cropped = image[y1:y2, x1:x2]
-            lab = cv2.cvtColor(image_cropped, cv2.COLOR_BGR2LAB)
-            l, a, b = cv2.split(lab)
-            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
-            cl = clahe.apply(l)
-            limg = cv2.merge((cl, a, b))
-            image_cropped = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-            # Use fill
-            image[y1:y2, x1:x2] = image_cropped
-            # image = cv2.resize(image_cropped, TARGET_SIZE)
+            # image_cropped = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+            # # Use fill
+            # image[y1:y2, x1:x2] = image_cropped
+            # # image = cv2.resize(image_cropped, TARGET_SIZE)
 
             image_list[i] = image
         return np.array(image_list)
