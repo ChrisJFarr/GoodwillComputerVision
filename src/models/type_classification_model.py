@@ -38,6 +38,7 @@ class TypeClassificationModel(ImageClassificationAbstract):
         return predictions
 
     def get_x_y_data(self, image_paths_list, augment=False):
+        # TODO make preprocessing parallel, and explore storing and retrieving preprocessed images
         # Load images
         images_array = self.get_images_array(image_paths_list)
         # Preprocess x_data
@@ -63,7 +64,7 @@ class TypeClassificationModel(ImageClassificationAbstract):
             features_list.append(features)
         # Convert features_list to array
         x_data = np.array(features_list)
-        assert len(x_data.shape) > 1, "Mismatching features lengths"
+        assert len(x_data.shape) > 1, "Mismatching features lengths: %s" % [len(x) for x in x_data]
         return x_data, y_data
 
     @staticmethod
@@ -80,10 +81,38 @@ class TypeClassificationModel(ImageClassificationAbstract):
         image_list = list(images_array)
         for i in range(len(images_array)):
             image = image_list[i]
-            # accepts images array, return preprocessed images array
+            # # accepts images array, return preprocessed images array
             image = cv2.resize(image, TARGET_SIZE)
-            # Convert to grayscale
-            # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # # Image Enhancement (future enhancement, working)
+            # # Crop to only the object
+            # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # gray_blur = cv2.GaussianBlur(gray, (15, 15), 0)
+            # thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 1)
+            # kernel = np.ones((5, 5), np.uint8)
+            # closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+            # cont_img = closing.copy()
+            # _, contours, hierarchy = cv2.findContours(cont_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            # sorted_contours = sorted(contours, key=lambda x: cv2.contourArea(x))
+            # rect = cv2.minAreaRect(sorted_contours[-1])
+            # box = cv2.boxPoints(rect)
+            # box = np.int0(box)
+            # x1 = max(min(box[:, 0]), 0)
+            # y1 = max(min(box[:, 1]), 0)
+            # x2 = max(max(box[:, 0]), 0)
+            # y2 = max(max(box[:, 1]), 0)
+            #
+            # # Enhance
+            # image_cropped = image[y1:y2, x1:x2]
+            # lab = cv2.cvtColor(image_cropped, cv2.COLOR_BGR2LAB)
+            # l, a, b = cv2.split(lab)
+            # clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+            # cl = clahe.apply(l)
+            # limg = cv2.merge((cl, a, b))
+            # image_cropped = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+            # # Use fill
+            # image[y1:y2, x1:x2] = image_cropped
+            # # image = cv2.resize(image_cropped, TARGET_SIZE)
+
             image_list[i] = image
         return np.array(image_list)
 
@@ -96,35 +125,55 @@ class TypeClassificationModel(ImageClassificationAbstract):
 
     @staticmethod
     def lbp_feature_feature_extractor(image):
-        num_row = 6
-        num_col = 4
+
+        def normalize_lbp_counts(lbp_counts):
+            counts_dict = dict(zip(*lbp_counts))
+            for i in range(0, no_points + 2):
+                if counts_dict.get(i) is None:
+                    counts_dict[i] = 0
+            return counts_dict
+
+        num_row = 10
+        num_col = 5
         radius = 3
         no_points = 8 * radius
         lbp = []
         img_size = image.shape
+        # print("image_size", img_size)
         row_size = img_size[0] // num_row
         col_size = img_size[1] // num_col
-        for row in range(1, row_size * num_row, row_size):
-            for col in range(1, int(col_size * num_col), col_size):
+        for row in list(range(0, row_size * num_row, row_size)):
+            for col in list(range(0, int(col_size * num_col), col_size)):
                 # Extracting blocks and generating features
-                if (row == 1) and (col == 1):
+                if (row == 0) and (col == 0):
                     continue
-                if (row == 1) and (col == (col_size * num_col - col_size + 1)):
+                if (row == 0) and (col == (col_size * num_col - col_size)):
                     continue
-                block_r = image[row:(row + row_size - 1), col:(col + col_size - 1), 0]
-                block_g = image[row:(row + row_size - 1), col:(col + col_size - 1), 1]
-                block_b = image[row:(row + row_size - 1), col:(col + col_size - 1), 2]
+
+                block_r = image[row:(row + row_size), col:(col + col_size), 0]
+                block_g = image[row:(row + row_size), col:(col + col_size), 1]
+                block_b = image[row:(row + row_size), col:(col + col_size), 2]
                 lbp_temp_r = local_binary_pattern(block_r, no_points, radius, method='uniform')
                 lbp_temp_g = local_binary_pattern(block_g, no_points, radius, method='uniform')
                 lbp_temp_b = local_binary_pattern(block_b, no_points, radius, method='uniform')
                 # Calculate the histogram
-                x_r = itemfreq(lbp_temp_r.ravel())
-                x_g = itemfreq(lbp_temp_g.ravel())
-                x_b = itemfreq(lbp_temp_b.ravel())
+                x_r = np.unique(lbp_temp_r.ravel(), return_counts=True)
+                x_g = np.unique(lbp_temp_g.ravel(), return_counts=True)
+                x_b = np.unique(lbp_temp_b.ravel(), return_counts=True)
+
+                # Align the bins
+                x_r_t = normalize_lbp_counts(x_r)
+                x_g_t = normalize_lbp_counts(x_g)
+                x_b_t = normalize_lbp_counts(x_b)
+
+                x_r_counts = [value for key, value in sorted(x_r_t.items())]
+                x_g_counts = [value for key, value in sorted(x_g_t.items())]
+                x_b_counts = [value for key, value in sorted(x_b_t.items())]
+
                 # Normalize the histogram
-                hist_r = x_r[:, 1] / sum(x_r[:, 1])
-                hist_g = x_g[:, 1] / sum(x_g[:, 1])
-                hist_b = x_b[:, 1] / sum(x_b[:, 1])
+                hist_r = x_r_counts / sum(x_r_counts)
+                hist_g = x_g_counts / sum(x_g_counts)
+                hist_b = x_b_counts / sum(x_b_counts)
                 lbp.extend(hist_r)
                 lbp.extend(hist_g)
                 lbp.extend(hist_b)

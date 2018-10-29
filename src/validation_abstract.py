@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class ValidationAbstract(ABC):
 
-    def __init__(self, cache_path):
+    def __init__(self, cache_path=None):
         self.actual = None
         self.predicted = None
         self.available_classes = None
